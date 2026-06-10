@@ -20,9 +20,17 @@
 
 (defclass animal () 
     ((nome :initarg :nome :type string :accessor a-nome)
-    (especie :initarg :especie :type string :accessor a-especie)
+    (sexo :initarg :sexo :type string :accessor a-sexo)
     (dono :initarg :dono :type pessoa :accessor a-dono)
     (chip :initarg :chip :type integer :accessor a-chip)))
+
+(defclass gato (animal) ())
+(defmethod barulho ((gato gato))
+    (format t "~a esta miando~%" (a-nome gato)))
+    
+(defclass cachorro (animal) ())
+(defmethod barulho ((cachorro cachorro))
+    (format t "~a esta latindo~%" (a-nome cachorro)))
 
 (defmethod adicionar-conta ((banco banco) (conta conta-bancaria))
     (push conta (b-contas banco))
@@ -34,7 +42,10 @@
     (if (>= (cb-saldo conta) valor)
         (progn 
             (setf (cb-saldo conta) (- (cb-saldo conta) valor))
-                (format t "Saque de ~a realizado na conta ~a. Novo saldo: ~a~%" valor (cb-numero conta) (cb-saldo conta)))
+            (format t "Saque de ~a realizado na conta ~a. Novo saldo: ~a~%" 
+                                                                        valor 
+                                                                        (cb-numero conta) 
+                                                                        (cb-saldo conta)))
             (format t "Saldo insuficiente~%")))
 
 (defmethod depositar ((conta conta-bancaria) valor)
@@ -45,7 +56,8 @@
     (format t "~a quer atencao~%" (a-nome animal)))
 
 (defmethod falar ((pessoa pessoa) &rest texto)
-    (format t "~a diz: ~a~%" (p-nome pessoa) texto))
+    (format t "~a diz: " (p-nome pessoa))
+    (format t "~a~%" texto))
 
 (defvar *senua* (make-instance 'conta-bancaria
                                 :nome "Senua"
@@ -57,10 +69,22 @@
                                 :saldo 0.0
                                 :nivel-vip 3))
 
-(defvar *mimi* (make-instance 'animal 
-                                :especie "gato" 
+(defvar *mimi* (make-instance 'gato 
                                 :chip 3247838 
+                                :sexo "Masculino"
                                 :nome "mimi"
+                                :dono *senua*))
+
+(defvar *mel* (make-instance 'cachorro 
+                                :chip 223322 
+                                :sexo "Feminino"
+                                :nome "mel"
+                                :dono *senua*))
+                                
+(defvar *oli* (make-instance 'animal 
+                                :chip 438923
+                                :sexo "Masculino"
+                                :nome "oli"
                                 :dono *senua*))
 
 (defvar *mainBanco* (make-instance 'banco
@@ -74,19 +98,12 @@
 
 (format t "Contas no banco ~a:~%" (b-nome *mainBanco*))
 (dolist (conta (b-contas *mainBanco*))
-    (format t "-- Conta ~a de ~a tem saldo ~a~%" 
-                                        (cb-numero conta) 
-                                        (p-nome conta) 
-                                        (cb-saldo conta)))
-
-; (format t "~c[2J" #\Esc)
-(format t "~a ~a tem o chip ~a ~%" 
-                            (a-especie *mimi*) 
-                            (a-nome *mimi*) 
-                            (a-chip *mimi*))
-(format t "pessoa ~a tem ~a reais ~%" 
-                            (p-nome *senua*) 
-                            (cb-saldo *senua*))
+    (format t "- Conta ~a de ~a tem saldo ~a~%" 
+                                (cb-numero conta) 
+                                (p-nome conta) 
+                                (cb-saldo conta)))
 
 (barulho *mimi*)
-(falar *senua* "ola tenho uma mensagem quero que a oracle suma do universo")
+(barulho *mel*)
+(barulho *oli*)
+(falar *senua* "ola")
