@@ -1,3 +1,6 @@
+; 193017 - Bernardo BC
+; https://github.com/benidot/lisp-oop
+
 (defclass pessoa ()
     ((nome :initarg :nome :type string :accessor p-nome)
     (idade :initarg :idade :type integer :accessor p-idade)
