@@ -38,6 +38,12 @@
                                             (cb-numero conta) 
                                             (b-nome banco)))
 
+(defmethod total-saldo ((banco banco))
+  (let ((total 0.0))
+    (dolist (conta (b-contas banco))
+      (setf total (+ total (cb-saldo conta))))
+    total))
+
 (defmethod sacar ((conta conta-bancaria) valor)
     (if (>= (cb-saldo conta) valor)
         (progn 
@@ -56,8 +62,7 @@
     (format t "~a quer atencao~%" (a-nome animal)))
 
 (defmethod falar ((pessoa pessoa) &rest texto)
-    (format t "~a diz: " (p-nome pessoa))
-    (format t "~a~%" texto))
+  (format t "~a diz: ~{~a~^ ~}~%" (p-nome pessoa) texto))
 
 (defvar *senua* (make-instance 'conta-bancaria
                                 :nome "Senua"
@@ -93,12 +98,14 @@
                                 :governamental t))
 
 (adicionar-conta *mainBanco* *senua*)
+(format t "Saldo total do banco ~a: ~a~%" (b-nome *mainBanco*) (total-saldo *mainBanco*))
 (depositar *senua* 500.0)
+(format t "Saldo total do banco ~a: ~a~%" (b-nome *mainBanco*) (total-saldo *mainBanco*))
 (sacar *senua* 20.0)
 
 (format t "Contas no banco ~a:~%" (b-nome *mainBanco*))
 (dolist (conta (b-contas *mainBanco*))
-    (format t "- Conta ~a de ~a tem saldo ~a~%" 
+    (format t "     Conta ~a de ~a tem saldo ~a~%" 
                                 (cb-numero conta) 
                                 (p-nome conta) 
                                 (cb-saldo conta)))
